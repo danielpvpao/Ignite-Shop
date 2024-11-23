@@ -1,10 +1,11 @@
-import { SuccessContainer } from "@/styles/succes";
-import { ImageContainer } from "./product";
+import { ImageContainer, SuccessContainer } from "@/styles/succes";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { stripe } from "../lib/stripe";
 import Image from "next/image";
 import Head from "next/head";
+import { useShoppingCart } from "use-shopping-cart";
+import Stripe from "stripe";
 interface SuccessProps {
     customerName: string,
     product: {
@@ -13,6 +14,7 @@ interface SuccessProps {
     }
 }
 export default function Success({customerName, product}: SuccessProps){
+    const { cartDetails,  } = useShoppingCart()
     return(
         <>
         <Head>
@@ -20,14 +22,26 @@ export default function Success({customerName, product}: SuccessProps){
 
         <meta name="robots" content="noindex" />
         </Head>
-
         <SuccessContainer>
-            <h1>Compra efetuada!</h1>
-
-            <ImageContainer>
-                <Image src={product.imageUrl} width={120} height={110} alt=""/>
+        <section>
+        {
+    Object.values(cartDetails || {}).length <= 3 ? (
+        Object.values(cartDetails || {}).map((product) => (
+            <ImageContainer key={product.id}>
+                <Image src={product.imageUrl} width={140} height={140} alt={product.name || 'Produto'} />
             </ImageContainer>
+        ))
+    ) : (
+        Object.values(cartDetails || {}).slice(0, 3).map((product) => (
+            <ImageContainer key={product.id}>
+                <Image src={product.imageUrl} width={140} height={140} alt={product.name || 'Produto'} />
+            </ImageContainer>
+        ))
+    )
+}
+</section>
 
+            <h1>Compra efetuada!</h1>
             <p>
                 Uhull <strong>{customerName}</strong>, sua <strong>{product.name}</strong> está a caminho da sua casa
             </p>
@@ -53,8 +67,19 @@ if (!query.session_id) {
 const session = await stripe.checkout.sessions.retrieve(sessionId, {
     expand: ['line_items', 'line_items.data.price.product']
 })
-const customerName = session.customer_details.name;
-const product = session.line_items.data[0].price.product as Stripe.Product
+if (!session.line_items || !session.line_items.data || session.line_items.data.length === 0) {
+    return {
+      notFound: true, 
+    };
+  }
+  const customerName = session.customer_details?.name;
+
+  const product = session.line_items.data[0].price?.product as Stripe.Product;
+  if (!product) {
+    return {
+      notFound: true, 
+    };
+  }
 return {
     props: {
         customerName,

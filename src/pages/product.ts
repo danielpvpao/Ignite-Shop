@@ -5,7 +5,6 @@ export const ProductContainer = styled('main', {
     gridTemplateColumns: '1fr 1fr',
     alignItems: 'stretch',
     gap: '4rem',
-
     maxWidth: 1100,
     margin: '0 auto',
 
@@ -59,16 +58,10 @@ export const ProductDetails = styled('div', {
       cursor: 'pointer',
       fontSize: '$md',
     
-      '&:disabled': {
-        opacity: 0.6,
-        cursor: 'not-allowed',
-      },
-      '&:not(:disabled):hover': {
-        opacity: 0.6,
-        cursor: 'not-allowed',
-      },
+    
       '&:hover': {
         backgroundColor: '$green300',
+        cursor: 'pointer',
       }
     },
 })
