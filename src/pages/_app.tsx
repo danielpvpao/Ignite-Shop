@@ -8,7 +8,7 @@ import { Header } from "@/Components/Header/Header";
 globalStyles();
 
 export default function App({ Component, pageProps }: AppProps) {
-  const stripePublicKey = process.env.STRIPE_PUBLIC_KEY || ""; 
+  const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!;
 
   return (
     <ShoppingCartProvider>
