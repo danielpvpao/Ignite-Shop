@@ -9,7 +9,6 @@ globalStyles();
 
 export default function App({ Component, pageProps }: AppProps) {
   const stripePublicKey = process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY!;
-
   return (
     <ShoppingCartProvider>
       <CartProvider
