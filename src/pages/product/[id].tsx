@@ -1,10 +1,10 @@
-import { ImageContainer, ProductContainer, ProductDetails } from "../product"
+import { ImageContainer, ProductContainer, ProductDetails } from "../../../styles/product"
 import { GetStaticPaths, GetStaticProps } from "next"
-import { stripe } from "@/src/lib/stripe"
 import Stripe from "stripe"
 import Image from "next/image"
 import Head from "next/head"
 import { useShoppingCart } from "use-shopping-cart"
+import { stripe } from "@/src/lib/stripe"
 export interface ProductProps {
     product: {
         id: string,
@@ -58,13 +58,16 @@ return(
 )
 }
 export const getStaticPaths: GetStaticPaths = async () => {
+    const products = await stripe.products.list();
+    const paths = products.data.map((product) => ({
+        params: { id: product.id },
+    }));
+
     return {
-            paths: [
-                { params: {id: 'prod_'}}
-            ],
-            fallback: "blocking",
-        }
-}
+        paths,
+        fallback: 'blocking', 
+    };
+};
 export const getStaticProps: GetStaticProps<ProductProps, { id: string }> = async ({ params }) => {
     const productId = params?.id;
 
@@ -78,10 +81,11 @@ export const getStaticProps: GetStaticProps<ProductProps, { id: string }> = asyn
         const product = await stripe.products.retrieve(productId, {
             expand: ['default_price'],
         });
-
         const price = product.default_price as Stripe.Price;
-
-        if (price.unit_amount) {
+        if (!price || !price.unit_amount) {
+            console.error("Preço não encontrado para o produto", productId);
+            return { notFound: true };
+        }
             return {
                 props: {
                     product: {
@@ -95,10 +99,6 @@ export const getStaticProps: GetStaticProps<ProductProps, { id: string }> = asyn
                 },
                 revalidate: 60 * 60 * 1, 
             };
-        }
-
-        return { notFound: true };
-
     } catch (error) {
         console.error("Erro ao buscar produto:", error);
         return { notFound: true };
