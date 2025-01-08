@@ -17,7 +17,6 @@ O **Ignite Shop** é uma aplicação de e-commerce desenvolvida em **Next.js** q
 
 - 🛒 **Catálogo de produtos**: Exibição de camisetas disponíveis para compra.
 - 💳 **Integração com Stripe**: Pagamentos seguros e rápidos.
-- 📱 **Responsividade**: Design otimizado para desktop e dispositivos móveis.
 
 ## Como executar o projeto localmente 💻
 
