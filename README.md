@@ -1,4 +1,5 @@
 # Ignite Shop 👕✨
+![chrome-capture-2025-1-8 (5)](https://github.com/user-attachments/assets/6fabc8cb-a709-4d14-a3f3-c6fd8164a6b2)
 
 
 ## Sobre o projeto
